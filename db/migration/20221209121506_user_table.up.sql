@@ -1,0 +1,6 @@
+CREATE TABLE user (
+  first_name VARCHAR NOT NULL,
+  last_name VARCHAR NOT NULL,
+  username VARCHAR NOT NULL UNIQUE,
+  email VARCHAR NOT NULL UNIQUE
+) INHERITS (base);

@@ -1,0 +1,3 @@
+DROP FUNCTION IF EXISTS updated()
+
+DROP TABLE IF EXISTS base; 

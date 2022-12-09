@@ -1,34 +1,38 @@
-dbVersion := 15
+dbVersion := 14
 dbPort := 5432
 dbPassword := password
-dbName := dbName
-username := root
+dbName := projectDb
+dbUser := root
 
-postgres:
-	docker run --name postgres$(dbVersion) -p $(dbPort):$(dbPort) -e POSTGRES_PASSWORD=$(dbPassword) -d postgres:$(dbVersion)-alpine
+# ------------------------- Database
+startdb:
+	docker run --name postgres14 -p $(dbPort):$(dbPort) -e POSTGRES_DB=$(dbName) -e POSTGRES_USER=$(dbUser) -e POSTGRES_PASSWORD=$(dbPassword) -d postgres:14-alpine
 
-createdb:
-	docker exec -it $(db) createdb --username=$(username) --owner=$(username) $(dbName)
+psql:
+	docker exec -it postgres14 psql -U $(dbUser) -d $(dbName)
 
-dropdb:
-	docker exec -it postgres13 dropdb dbName
+# ------------------------- Migration
+createmigration:
+	migrate create -ext sql -dir db/migration -seq # pass seq here
 
 migrateup:
-	migrate -path db/migration -database "postgresql://$(username):$(password)@localhost:$(dbPort)/$(dbName)" -verbose up
+	migrate -path db/migration -database "postgresql://$(dbUser):$(dbPassword)@localhost:$(dbPort)/$(dbName)?sslmode=disable" -verbose up
 
 migrateup1:
-	migrate -path db/migration -database "postgresql://$(username):$(password)@localhost:$(dbPort)/$(dbName)" -verbose up 1
+	migrate -path db/migration -database "postgresql://$(dbUser):$(dbPassword)@localhost:$(dbPort)/$(dbName)?sslmode=disable" -verbose up 1
 
 migratedown:
-	migrate -path db/migration -database "postgresql://$(username):$(password)@localhost:$(dbPort)/$(dbName)" -verbose down
+	migrate -path db/migration -database "postgresql://$(dbUser):$(dbPassword)@localhost:$(dbPort)/$(dbName)?sslmode=disable" -verbose down
 
 migratedown1:
-	migrate -path db/migration -database "postgresql://$(username):$(password)@localhost:$(dbPort)/$(dbName)" -verbose down 1
+	migrate -path db/migration -database "postgresql://$(dbUser):$(dbPassword)@localhost:$(dbPort)/$(dbName)?sslmode=disable" -verbose down 1
 
+# ------------------------- Sqlc
 sqlc:
 	sqlc generate
 
+# ------------------------- Test & Coverage
 test: 
 	go test -v -cover ./...
 
-.PHONY: postgres createdb dropdb migrateup migratedown
+.PHONY: startdb psql createmigration migrateup migrateup1 migratedown migratedown1 sqlc test
