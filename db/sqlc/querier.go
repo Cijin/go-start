@@ -14,7 +14,7 @@ type Querier interface {
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteUser(ctx context.Context, id uuid.UUID) error
 	GetUser(ctx context.Context, id uuid.UUID) (User, error)
-	ListUsers(ctx context.Context) ([]User, error)
+	ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error
 }

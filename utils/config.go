@@ -4,7 +4,7 @@ import "github.com/spf13/viper"
 
 type Config struct {
 	DBDriver      string `mapstructure:"DB_DRIVER"`
-	DBSource      string `mapstructure:"DB_Source"`
+	DBSource      string `mapstructure:"DB_SOURCE"`
 	ServerAddress string `mapstructure:"SERVER_ADDRESS"`
 }
 
@@ -12,7 +12,7 @@ func LoadConfig(path string) (config Config, err error) {
 	viper.AddConfigPath(path)
 	viper.SetConfigType("env")
 	// as the config file is 'app.env'
-	viper.SetConfigName("app")
+	viper.SetConfigName(".app")
 
 	/*
 	 * When called, Viper will check for an environment variable any time a viper.

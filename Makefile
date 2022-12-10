@@ -31,6 +31,10 @@ migratedown1:
 sqlc:
 	sqlc generate
 
+# ------------------------- Start Server
+server:
+	go run main.go
+
 # ------------------------- Test & Coverage
 test: 
 	go test -v -cover ./...
