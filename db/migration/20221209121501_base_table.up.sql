@@ -4,8 +4,7 @@ AS $function$
 SELECT now();
 $function$;
 
-CREATE TABLE base (
-  id uuid NOT NULL uuid_generate_v4 (),
-  created_at NOT NULL DEFAULT now (),
-  updated_at GENERATED ALWAYS AS (updated()) STORED
+CREATE TABLE IF NOT EXISTS base (
+  created_at timestamptz DEFAULT now() NOT NULL,
+  updated_at timestamptz GENERATED ALWAYS AS (updated()) STORED
 );
