@@ -21,6 +21,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Error connecting to db:", err)
 	}
+	// close db connection when main exits
 	defer conn.Close()
 
 	store := db.NewStore(conn)
