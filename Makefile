@@ -3,10 +3,14 @@ dbPort := 5432
 dbPassword := password
 dbName := projectDb
 dbUser := root
+dockerImage := postgres14
 
 # ------------------------- Database
-startdb:
-	docker run --name postgres14 -p $(dbPort):$(dbPort) -e POSTGRES_DB=$(dbName) -e POSTGRES_USER=$(dbUser) -e POSTGRES_PASSWORD=$(dbPassword) -d postgres:14-alpine
+createdb:
+	docker start --name $(dockerImage) -p $(dbPort):$(dbPort) -e POSTGRES_DB=$(dbName) -e POSTGRES_USER=$(dbUser) -e POSTGRES_PASSWORD=$(dbPassword) -d postgres:14-alpine
+
+createdb:
+	docker start $(dockerImage) 
 
 psql:
 	docker exec -it postgres14 psql -U $(dbUser) -d $(dbName)
@@ -39,4 +43,4 @@ server:
 test: 
 	go test -v -cover ./...
 
-.PHONY: startdb psql createmigration migrateup migrateup1 migratedown migratedown1 sqlc test
+.PHONY: createdb startdb psql createmigration migrateup migrateup1 migratedown migratedown1 sqlc test

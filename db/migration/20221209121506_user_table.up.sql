@@ -5,5 +5,5 @@ CREATE TABLE
     last_name VARCHAR NOT NULL,
     username VARCHAR NOT NULL UNIQUE,
     email VARCHAR NOT NULL UNIQUE,
-    hashed_password VARCHAR NOT NULL
+    password VARCHAR NOT NULL
   ) INHERITS (base);
