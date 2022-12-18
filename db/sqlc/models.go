@@ -17,12 +17,12 @@ type Base struct {
 }
 
 type User struct {
-	CreatedAt      time.Time    `json:"created_at"`
-	UpdatedAt      sql.NullTime `json:"updated_at"`
-	ID             uuid.UUID    `json:"id"`
-	FirstName      string       `json:"first_name"`
-	LastName       string       `json:"last_name"`
-	Username       string       `json:"username"`
-	Email          string       `json:"email"`
-	HashedPassword string       `json:"hashed_password"`
+	CreatedAt time.Time    `json:"created_at"`
+	UpdatedAt sql.NullTime `json:"updated_at"`
+	ID        uuid.UUID    `json:"id"`
+	FirstName string       `json:"first_name"`
+	LastName  string       `json:"last_name"`
+	Username  string       `json:"username"`
+	Email     string       `json:"email"`
+	Password  string       `json:"password"`
 }

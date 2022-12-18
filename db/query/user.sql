@@ -1,5 +1,5 @@
 -- name: GetUser :one
-SELECT * FROM users
+SELECT id, first_name, last_name, username, email FROM users
 WHERE id = $1 LIMIT 1;
 
 -- name: ListUsers :many
@@ -10,16 +10,16 @@ OFFSET $2;
 
 -- name: CreateUser :one
 INSERT INTO users (
-  first_name, last_name, email, hashed_password, username
+  first_name, last_name, email, password, username
 ) VALUES (
   $1, $2, $3, $4, $5
 )
-RETURNING *;
+RETURNING id, first_name, last_name, username, email;
 
 -- name: DeleteUser :exec
 DELETE FROM users
 WHERE id = $1
-RETURNING *;
+RETURNING id;
 
 -- name: UpdateUser :one
 UPDATE users
@@ -28,9 +28,10 @@ UPDATE users
   email = $4,
   username = $5
 WHERE id = $1
-RETURNING *;
+RETURNING id, first_name, last_name, username, email;
 
 -- name: UpdateUserPassword :exec
 UPDATE users
-  set hashed_password = $2
-WHERE id = $1;
+  set password = $2
+WHERE id = $1
+RETURNING id;
