@@ -1,10 +1,10 @@
 -- name: GetUser :one
-SELECT id, first_name, last_name, username, email FROM users
+SELECT * FROM users
 WHERE id = $1 LIMIT 1;
 
 -- name: ListUsers :many
 SELECT * FROM users
-ORDER BY name
+ORDER BY first_name
 LIMIT $1
 OFFSET $2;
 
@@ -14,7 +14,7 @@ INSERT INTO users (
 ) VALUES (
   $1, $2, $3, $4, $5
 )
-RETURNING id, first_name, last_name, username, email;
+RETURNING *;
 
 -- name: DeleteUser :exec
 DELETE FROM users
@@ -28,10 +28,10 @@ UPDATE users
   email = $4,
   username = $5
 WHERE id = $1
-RETURNING id, first_name, last_name, username, email;
+RETURNING *;
 
 -- name: UpdateUserPassword :exec
 UPDATE users
   set password = $2
 WHERE id = $1
-RETURNING id;
+RETURNING *;

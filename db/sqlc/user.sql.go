@@ -17,7 +17,7 @@ INSERT INTO users (
 ) VALUES (
   $1, $2, $3, $4, $5
 )
-RETURNING id, first_name, last_name, username, email
+RETURNING created_at, updated_at, id, first_name, last_name, username, email, password
 `
 
 type CreateUserParams struct {
@@ -28,15 +28,7 @@ type CreateUserParams struct {
 	Username  string `json:"username"`
 }
 
-type CreateUserRow struct {
-	ID        uuid.UUID `json:"id"`
-	FirstName string    `json:"first_name"`
-	LastName  string    `json:"last_name"`
-	Username  string    `json:"username"`
-	Email     string    `json:"email"`
-}
-
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
 	row := q.queryRow(ctx, q.createUserStmt, createUser,
 		arg.FirstName,
 		arg.LastName,
@@ -44,13 +36,16 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 		arg.Password,
 		arg.Username,
 	)
-	var i CreateUserRow
+	var i User
 	err := row.Scan(
+		&i.CreatedAt,
+		&i.UpdatedAt,
 		&i.ID,
 		&i.FirstName,
 		&i.LastName,
 		&i.Username,
 		&i.Email,
+		&i.Password,
 	)
 	return i, err
 }
@@ -67,34 +62,29 @@ func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) error {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, first_name, last_name, username, email FROM users
+SELECT created_at, updated_at, id, first_name, last_name, username, email, password FROM users
 WHERE id = $1 LIMIT 1
 `
 
-type GetUserRow struct {
-	ID        uuid.UUID `json:"id"`
-	FirstName string    `json:"first_name"`
-	LastName  string    `json:"last_name"`
-	Username  string    `json:"username"`
-	Email     string    `json:"email"`
-}
-
-func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (GetUserRow, error) {
+func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (User, error) {
 	row := q.queryRow(ctx, q.getUserStmt, getUser, id)
-	var i GetUserRow
+	var i User
 	err := row.Scan(
+		&i.CreatedAt,
+		&i.UpdatedAt,
 		&i.ID,
 		&i.FirstName,
 		&i.LastName,
 		&i.Username,
 		&i.Email,
+		&i.Password,
 	)
 	return i, err
 }
 
 const listUsers = `-- name: ListUsers :many
 SELECT created_at, updated_at, id, first_name, last_name, username, email, password FROM users
-ORDER BY name
+ORDER BY first_name
 LIMIT $1
 OFFSET $2
 `
@@ -143,7 +133,7 @@ UPDATE users
   email = $4,
   username = $5
 WHERE id = $1
-RETURNING id, first_name, last_name, username, email
+RETURNING created_at, updated_at, id, first_name, last_name, username, email, password
 `
 
 type UpdateUserParams struct {
@@ -154,15 +144,7 @@ type UpdateUserParams struct {
 	Username  string    `json:"username"`
 }
 
-type UpdateUserRow struct {
-	ID        uuid.UUID `json:"id"`
-	FirstName string    `json:"first_name"`
-	LastName  string    `json:"last_name"`
-	Username  string    `json:"username"`
-	Email     string    `json:"email"`
-}
-
-func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateUserRow, error) {
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
 	row := q.queryRow(ctx, q.updateUserStmt, updateUser,
 		arg.ID,
 		arg.FirstName,
@@ -170,13 +152,16 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateU
 		arg.Email,
 		arg.Username,
 	)
-	var i UpdateUserRow
+	var i User
 	err := row.Scan(
+		&i.CreatedAt,
+		&i.UpdatedAt,
 		&i.ID,
 		&i.FirstName,
 		&i.LastName,
 		&i.Username,
 		&i.Email,
+		&i.Password,
 	)
 	return i, err
 }
@@ -185,7 +170,7 @@ const updateUserPassword = `-- name: UpdateUserPassword :exec
 UPDATE users
   set password = $2
 WHERE id = $1
-RETURNING id
+RETURNING created_at, updated_at, id, first_name, last_name, username, email, password
 `
 
 type UpdateUserPasswordParams struct {

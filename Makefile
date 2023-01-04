@@ -39,8 +39,11 @@ sqlc:
 server:
 	go run main.go
 
-# ------------------------- Test & Coverage
+# ------------------------- Test & Mocks
 test: 
 	go test -v -cover ./...
 
-.PHONY: createdb startdb psql createmigration migrateup migrateup1 migratedown migratedown1 sqlc test
+mockgen:
+	mockgen -package mockdb -destination db/mock/store.go github.com/cijin/go-start/db/sqlc Store
+
+.PHONY: createdb startdb psql createmigration migrateup migrateup1 migratedown migratedown1 sqlc test mockgen

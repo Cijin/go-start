@@ -2,14 +2,18 @@ package db
 
 import "database/sql"
 
-// Store provides methods to execute db queries and transactions
-type Store struct {
+type Store interface {
+	Querier
+}
+
+// Store provides methods to execute SQL db queries and transactions
+type SQLStore struct {
 	*Queries
 	db *sql.DB
 }
 
-func NewStore(db *sql.DB) *Store {
-	return &Store{
+func NewStore(db *sql.DB) Store {
+	return &SQLStore{
 		db:      db,
 		Queries: New(db),
 	}
