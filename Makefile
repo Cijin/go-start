@@ -9,7 +9,7 @@ dockerImage := postgres14
 createdb:
 	docker start --name $(dockerImage) -p $(dbPort):$(dbPort) -e POSTGRES_DB=$(dbName) -e POSTGRES_USER=$(dbUser) -e POSTGRES_PASSWORD=$(dbPassword) -d postgres:14-alpine
 
-createdb:
+startdb:
 	docker start $(dockerImage) 
 
 psql:
@@ -43,7 +43,7 @@ server:
 test: 
 	go test -v -cover ./...
 
-mockgen:
+mock:
 	mockgen -package mockdb -destination db/mock/store.go github.com/cijin/go-start/db/sqlc Store
 
-.PHONY: createdb startdb psql createmigration migrateup migrateup1 migratedown migratedown1 sqlc test mockgen
+.PHONY: createdb startdb psql createmigration migrateup migrateup1 migratedown migratedown1 sqlc test mock

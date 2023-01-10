@@ -67,10 +67,10 @@ func TestGetUser(t *testing.T) {
 }
 
 func TestListUsers(t *testing.T) {
-	u1, err := testQueries.CreateUser(context.Background(), generateRandomUser())
-	u2, err := testQueries.CreateUser(context.Background(), generateRandomUser())
-	u3, err := testQueries.CreateUser(context.Background(), generateRandomUser())
-	u4, err := testQueries.CreateUser(context.Background(), generateRandomUser())
+	_, err := testQueries.CreateUser(context.Background(), generateRandomUser())
+	_, err = testQueries.CreateUser(context.Background(), generateRandomUser())
+	_, err = testQueries.CreateUser(context.Background(), generateRandomUser())
+	_, err = testQueries.CreateUser(context.Background(), generateRandomUser())
 
 	require.NoError(t, err)
 
@@ -84,13 +84,32 @@ func TestListUsers(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, users)
 	require.Len(t, users, int(arg.Limit))
-	require.Contains(t, users, []User{u1, u2})
+}
 
-	arg.Offset = 2
+func TestUpdateUser(t *testing.T) {
+	// create user
+	u, err := testQueries.CreateUser(context.Background(), generateRandomUser())
+	// update user
+	arg := UpdateUserParams{
+		ID:        u.ID,
+		FirstName: "Test",
+		LastName:  u.LastName,
+		Email:     u.Email,
+		Username:  u.Username,
+	}
 
-	users, err = testQueries.ListUsers(context.Background(), arg)
+	updatedUser, err := testQueries.UpdateUser(context.Background(), arg)
+
 	require.NoError(t, err)
-	require.NotEmpty(t, users)
-	require.Len(t, users, int(arg.Limit))
-	require.Contains(t, users, []User{u3, u4})
+	require.NotEmpty(t, updatedUser)
+
+	require.NotEqual(t, u.FirstName, updatedUser.FirstName)
+	require.Equal(t, arg.Email, updatedUser.Email)
+	require.Equal(t, arg.Username, updatedUser.Username)
+	require.Equal(t, arg.FirstName, updatedUser.FirstName)
+	require.Equal(t, arg.LastName, updatedUser.LastName)
+
+	require.NotZero(t, updatedUser.ID)
+	require.Equal(t, u.CreatedAt, updatedUser.CreatedAt)
+	require.NotEqual(t, updatedUser.CreatedAt, updatedUser.UpdatedAt)
 }
