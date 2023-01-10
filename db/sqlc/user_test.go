@@ -113,3 +113,17 @@ func TestUpdateUser(t *testing.T) {
 	require.Equal(t, u.CreatedAt, updatedUser.CreatedAt)
 	require.NotEqual(t, updatedUser.CreatedAt, updatedUser.UpdatedAt)
 }
+
+func TestUpdateUserPassword(t *testing.T) {
+	// create user
+	u, err := testQueries.CreateUser(context.Background(), generateRandomUser())
+	// update user
+	arg := UpdateUserPasswordParams{
+		ID:       u.ID,
+		Password: "Test-Password",
+	}
+
+	err = testQueries.UpdateUserPassword(context.Background(), arg)
+
+	require.NoError(t, err)
+}
